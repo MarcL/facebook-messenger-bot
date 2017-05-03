@@ -1,5 +1,6 @@
 import {createRequest, createResponse} from 'node-mocks-http';
 import webhook from '../../../src/middleware/webhook';
+import * as configValues from '../../../src/configValues';
 
 describe('webhook middleware', () => {
     let fakeRequest;
@@ -7,6 +8,9 @@ describe('webhook middleware', () => {
     let spyResponseSendStatus;
     let spyResponseStatus;
     let spyResponseSend;
+    let stubConfigValuesValidationToken;
+
+    const defaultValidationToken = 'defaultValidationToken';
 
     beforeEach(() => {
         fakeRequest = createRequest();
@@ -15,12 +19,15 @@ describe('webhook middleware', () => {
         spyResponseSendStatus = sinon.spy(fakeResponse, 'sendStatus');
         spyResponseStatus = sinon.spy(fakeResponse, 'status');
         spyResponseSend = sinon.spy(fakeResponse, 'send');
+        stubConfigValuesValidationToken = sinon.stub(configValues, 'VALIDATION_TOKEN');
+        stubConfigValuesValidationToken.returns(defaultValidationToken);
     });
 
     afterEach(() => {
         spyResponseSendStatus.restore();
         spyResponseStatus.restore();
         spyResponseSend.restore();
+        stubConfigValuesValidationToken.restore();
     });
 
     describe('should fail validation', () => {
@@ -52,10 +59,10 @@ describe('webhook middleware', () => {
         });
     });
 
-    it('should return 200 when validation passes', () => {
+    it.only('should return 200 when validation passes', () => {
         fakeRequest.query = {
             'hub.mode': 'subscribe',
-            'hub.verify_token': 'VALIDATION_TOKEN'
+            'hub.verify_token': defaultValidationToken
         };
 
         webhook(fakeRequest, fakeResponse);

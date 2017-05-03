@@ -1,8 +1,9 @@
-// TODO fixme
-const VALIDATION_TOKEN = 'VALIDATION_TOKEN';
+import {VALIDATION_TOKEN} from '../configValues';
+
 function webhookMiddleware(request, response) {
+    const validationToken = VALIDATION_TOKEN();
     if (request.query['hub.mode'] === 'subscribe' &&
-        request.query['hub.verify_token'] === VALIDATION_TOKEN) {
+        request.query['hub.verify_token'] === validationToken) {
         console.log("Validating webhook");
         response.status(200).send(request.query['hub.challenge']);
     } else {
