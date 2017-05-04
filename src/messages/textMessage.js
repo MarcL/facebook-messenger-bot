@@ -1,4 +1,3 @@
-import request from 'request';
 import callSendAPI from '../services/sendApi';
 
 /*
@@ -16,7 +15,7 @@ function sendTextMessage(recipientId, messageText, accessToken) {
         }
     };
 
-    callSendAPI(messageData, accessToken, request);
+    callSendAPI(messageData, accessToken);
 }
 
 export default sendTextMessage;

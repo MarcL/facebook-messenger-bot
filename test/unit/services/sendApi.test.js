@@ -1,5 +1,6 @@
-import callSendApi from '../../../src/services/sendApi';
-import * as request from 'request';
+// import callSendApi from '../../../src/services/sendApi';
+import proxyquire from 'proxyquire';
+// import * as request from 'request';
 
 // TODO - proxyquire request
 
@@ -7,6 +8,7 @@ describe('callSendApi', () => {
     let stubRequest;
     let spyConsoleLog;
     let spyConsoleError;
+    let callSendApi;
 
     const defaultAccessToken = 'defaultAccessToken';
     const defaultRequestData = {
@@ -22,18 +24,21 @@ describe('callSendApi', () => {
 
 
     beforeEach(() => {
-        stubRequest = sinon.stub(request, 'default');
+        stubRequest = sinon.stub();
+        callSendApi = proxyquire('../../../src/services/sendApi', {
+            'request': stubRequest
+        }).default;
+
         spyConsoleLog = sinon.spy(console, 'log');
         spyConsoleError = sinon.spy(console, 'error');
     });
 
     afterEach(() => {
-        stubRequest.restore();
         spyConsoleLog.restore();
         spyConsoleError.restore();
     });
 
-    xit('should make expected POST request', () => {
+    it('should make expected POST request', () => {
         const givenAccessToken = 'givenAccessToken';
         const givenMessageData = {
             key: 'value'
@@ -48,9 +53,9 @@ describe('callSendApi', () => {
             json: givenMessageData
         };
 
-        callSendApi(givenRequestData, givenAccessToken, request.default);
+        callSendApi(givenMessageData, givenAccessToken);
 
-        expect(stubRequest.getCall(0).args).to.deep.equal([givenRequestData]);
+        expect(stubRequest.getCall(0).args[0]).to.deep.equal(givenRequestData);
     });
 
     describe('when request is successful', () => {
@@ -69,7 +74,7 @@ describe('callSendApi', () => {
 
             stubRequest.yields(null, defaultSuccessResponse, givenBody);
 
-            callSendApi(defaultRequestData, defaultAccessToken, request.default);
+            callSendApi(defaultRequestData, defaultAccessToken);
 
             expect(spyConsoleLog.getCall(0).args).to.deep.equal([
                 'Successfully sent message with id %s to recipient %s',
@@ -87,7 +92,7 @@ describe('callSendApi', () => {
 
             stubRequest.yields(null, defaultSuccessResponse, givenBody);
 
-            callSendApi(defaultRequestData, defaultAccessToken, request.default);
+            callSendApi(defaultRequestData, defaultAccessToken);
 
             expect(spyConsoleLog.getCall(0).args).to.deep.equal([
                 'Successfully called Send API for recipient %s',
@@ -109,7 +114,7 @@ describe('callSendApi', () => {
 
             stubRequest.yields('error', givenErrorResponse, givenBody);
 
-            callSendApi(defaultRequestData, defaultAccessToken, request.default);
+            callSendApi(defaultRequestData, defaultAccessToken);
 
             expect(spyConsoleError.getCall(0).args).to.deep.equal([
                 'Failed calling Send API',
@@ -131,7 +136,7 @@ describe('callSendApi', () => {
 
             stubRequest.yields(null, givenErrorResponse, givenBody);
 
-            callSendApi(defaultRequestData, defaultAccessToken, request.default);
+            callSendApi(defaultRequestData, defaultAccessToken);
 
             expect(spyConsoleError.getCall(0).args).to.deep.equal([
                 'Failed calling Send API',
