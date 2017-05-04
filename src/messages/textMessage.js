@@ -1,6 +1,10 @@
 import request from 'request';
 import callSendAPI from '../services/sendApi';
 
+/*
+ * Send a text message using the Send API.
+ *
+ */
 function sendTextMessage(recipientId, messageText, accessToken) {
     var messageData = {
         recipient: {

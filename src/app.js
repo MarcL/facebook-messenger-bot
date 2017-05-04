@@ -12,6 +12,8 @@
 
 import webhookGet from './middleware/webhookGet';
 import webhookPost from './middleware/webhookPost';
+import sendTextMessage from './messages/textMessage';
+import getValueFromEnvironmentOrConfig from './configValues';
 
 const
   bodyParser = require('body-parser'),
@@ -34,30 +36,23 @@ app.use(express.static('public'));
  */
 
 // App Secret can be retrieved from the App Dashboard
-const APP_SECRET = (process.env.MESSENGER_APP_SECRET) ?
-  process.env.MESSENGER_APP_SECRET :
-  config.get('appSecret');
-
-// Arbitrary value used to validate a webhook
-const VALIDATION_TOKEN = (process.env.MESSENGER_VALIDATION_TOKEN) ?
-  (process.env.MESSENGER_VALIDATION_TOKEN) :
-  config.get('validationToken');
+const APP_SECRET = getValueFromEnvironmentOrConfig('MESSENGER_APP_SECRET', 'appSecret');
 
 // Generate a page access token for your page from the App Dashboard
-const PAGE_ACCESS_TOKEN = (process.env.MESSENGER_PAGE_ACCESS_TOKEN) ?
-  (process.env.MESSENGER_PAGE_ACCESS_TOKEN) :
-  config.get('pageAccessToken');
+const PAGE_ACCESS_TOKEN = getValueFromEnvironmentOrConfig('MESSENGER_PAGE_ACCESS_TOKEN', 'pageAccessToken');
 
 // URL where the app is running (include protocol). Used to point to scripts and
 // assets located at this address.
-const SERVER_URL = (process.env.SERVER_URL) ?
-  (process.env.SERVER_URL) :
-  config.get('serverURL');
+const SERVER_URL = getValueFromEnvironmentOrConfig('SERVER_URL', 'serverURL');
+
+// Arbitrary value used to validate a webhook
+const VALIDATION_TOKEN = getValueFromEnvironmentOrConfig('MESSENGER_VALIDATION_TOKEN', 'validationToken');
 
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
   console.error("Missing config values");
   process.exit(1);
 }
+
 
 /*
  * Use your own validation token. Check that the token used in the Webhook
@@ -154,7 +149,7 @@ function receivedAuthentication(event) {
 
   // When an authentication is received, we'll send a message back to the sender
   // to let them know it was successful.
-  sendTextMessage(senderID, "Authentication successful");
+  sendTextMessage(senderID, "Authentication successful", PAGE_ACCESS_TOKEN);
 }
 
 /*
@@ -201,7 +196,7 @@ function receivedMessage(event) {
     console.log("Quick reply for message %s with payload %s",
       messageId, quickReplyPayload);
 
-    sendTextMessage(senderID, "Quick reply tapped");
+    sendTextMessage(senderID, "Quick reply tapped", PAGE_ACCESS_TOKEN);
     return;
   }
 
@@ -264,10 +259,10 @@ function receivedMessage(event) {
         break;
 
       default:
-        sendTextMessage(senderID, messageText);
+        sendTextMessage(senderID, messageText, PAGE_ACCESS_TOKEN);
     }
   } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
+    sendTextMessage(senderID, "Message with attachment received", PAGE_ACCESS_TOKEN);
   }
 }
 
@@ -319,7 +314,7 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to
   // let them know it was successful
-  sendTextMessage(senderID, "Postback called");
+  sendTextMessage(senderID, "Postback called", PAGE_ACCESS_TOKEN);
 }
 
 /*
@@ -464,24 +459,6 @@ function sendFileMessage(recipientId) {
           url: SERVER_URL + "/assets/test.txt"
         }
       }
-    }
-  };
-
-  callSendAPI(messageData);
-}
-
-/*
- * Send a text message using the Send API.
- *
- */
-function sendTextMessage(recipientId, messageText) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      text: messageText,
-      metadata: "DEVELOPER_DEFINED_METADATA"
     }
   };
 
