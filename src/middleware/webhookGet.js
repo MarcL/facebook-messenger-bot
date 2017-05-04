@@ -1,4 +1,4 @@
-function webhookGetMiddleware(validationToken) {
+function webhookGet(validationToken) {
 
     return (request, response) => {
         if (request.query['hub.mode'] === 'subscribe' &&
@@ -12,4 +12,4 @@ function webhookGetMiddleware(validationToken) {
     }
 }
 
-export default webhookGetMiddleware;
+export default webhookGet;

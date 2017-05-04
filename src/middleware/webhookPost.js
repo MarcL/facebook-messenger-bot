@@ -1,4 +1,4 @@
-function webhookPostMiddleware(request, response) {
+function webhookPost(request, response) {
     var data = request.body;
 
     // Make sure this is a page subscription
@@ -37,4 +37,4 @@ function webhookPostMiddleware(request, response) {
     }
 }
 
-export default webhookPostMiddleware;
+export default webhookPost;

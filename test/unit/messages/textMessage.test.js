@@ -7,6 +7,7 @@ describe('textMessage', () => {
         const givenAccessToken = 'givenAccessToken';
         const givenRecipientId = 'givenRecipientId';
         const givenMessageText = 'givenMessageText';
+
         const givenMessageData = {
             recipient: {
                 id: givenRecipientId
@@ -19,7 +20,8 @@ describe('textMessage', () => {
 
         sendTextMessage(givenRecipientId, givenMessageText, givenAccessToken);
 
-        expect(spyCallSendApi.getCall(0).args[0]).to.deep.equal(givenMessageData);
+        expect(spyCallSendApi.getCall(0).args[0])
+            .to.deep.equal(givenMessageData);
 
         spyCallSendApi.restore();
     });
