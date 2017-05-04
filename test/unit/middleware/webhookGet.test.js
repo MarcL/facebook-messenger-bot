@@ -1,14 +1,12 @@
 import {createRequest, createResponse} from 'node-mocks-http';
-import webhook from '../../../src/middleware/webhook';
-import * as configValues from '../../../src/configValues';
+import webhookGet from '../../../src/middleware/webhookGet';
 
-describe('webhook middleware', () => {
+describe('webhookGet middleware', () => {
     let fakeRequest;
     let fakeResponse;
     let spyResponseSendStatus;
     let spyResponseStatus;
     let spyResponseSend;
-    let stubConfigValuesValidationToken;
 
     const defaultValidationToken = 'defaultValidationToken';
 
@@ -19,20 +17,17 @@ describe('webhook middleware', () => {
         spyResponseSendStatus = sinon.spy(fakeResponse, 'sendStatus');
         spyResponseStatus = sinon.spy(fakeResponse, 'status');
         spyResponseSend = sinon.spy(fakeResponse, 'send');
-        stubConfigValuesValidationToken = sinon.stub(configValues, 'VALIDATION_TOKEN');
-        stubConfigValuesValidationToken.returns(defaultValidationToken);
     });
 
     afterEach(() => {
         spyResponseSendStatus.restore();
         spyResponseStatus.restore();
         spyResponseSend.restore();
-        stubConfigValuesValidationToken.restore();
     });
 
     describe('should fail validation', () => {
         it('fail validation when no hub.mode query parameter is present', () => {
-            webhook(fakeRequest, fakeResponse);
+            webhookGet(defaultValidationToken)(fakeRequest, fakeResponse);
 
             expect(spyResponseSendStatus).to.have.been.calledWithExactly(403);
         });
@@ -42,7 +37,7 @@ describe('webhook middleware', () => {
                 'hub.mode': 'notSubscribe'
             };
 
-            webhook(fakeRequest, fakeResponse);
+            webhookGet(defaultValidationToken)(fakeRequest, fakeResponse);
 
             expect(spyResponseSendStatus).to.have.been.calledWithExactly(403);
         });
@@ -53,19 +48,19 @@ describe('webhook middleware', () => {
                 'hub.verify_token': 'invalidVerifyToken'
             };
 
-            webhook(fakeRequest, fakeResponse);
+            webhookGet(defaultValidationToken)(fakeRequest, fakeResponse);
 
             expect(spyResponseSendStatus).to.have.been.calledWithExactly(403);
         });
     });
 
-    it.only('should return 200 when validation passes', () => {
+    it('should return 200 when validation passes', () => {
         fakeRequest.query = {
             'hub.mode': 'subscribe',
             'hub.verify_token': defaultValidationToken
         };
 
-        webhook(fakeRequest, fakeResponse);
+        webhookGet(defaultValidationToken)(fakeRequest, fakeResponse);
 
         expect(spyResponseStatus).to.have.been.calledWithExactly(200);
     });
@@ -75,11 +70,11 @@ describe('webhook middleware', () => {
 
         fakeRequest.query = {
             'hub.mode': 'subscribe',
-            'hub.verify_token': 'VALIDATION_TOKEN',
+            'hub.verify_token': defaultValidationToken,
             'hub.challenge': givenHubChallenge
         };
 
-        webhook(fakeRequest, fakeResponse);
+        webhookGet(defaultValidationToken)(fakeRequest, fakeResponse);
 
         expect(spyResponseSend).to.have.been.calledWithExactly(givenHubChallenge);
     });

@@ -1,9 +1,12 @@
 import config from 'config';
-import * as configValues from '../../src/configValues';
+import getValueFromEnvironmentOrConfig from '../../src/configValues';
 
 describe('config values', () => {
     let oldEnvironmentVariables;
     let stubConfigGet;
+
+    const defaultConfigKey = 'defaultConfigKey';
+    const defaultEnvironmentVariableKey = 'defaultEnvironmentVariableKey';
 
     beforeEach(() => {
         oldEnvironmentVariables = Object.assign({}, process.env);
@@ -15,71 +18,24 @@ describe('config values', () => {
         stubConfigGet.restore();
     });
 
-    describe('APP_SECRET', () => {
-        it('should retrieve expected value from MESSENGER_APP_SECRET environment variable', () => {
-            const givenAppSecret = 'givenAppSecret';
-            process.env['MESSENGER_APP_SECRET'] = givenAppSecret;
+    it('should retrieve value from environment variable if set', () => {
+        const givenEnvironmentVariableValue = 'givenEnvironmentVariableValue';
+        const givenEnvironmentVariableKey = 'givenEnvironmentVariableKey';
+        process.env[givenEnvironmentVariableKey] = givenEnvironmentVariableValue;
 
-            expect(configValues.APP_SECRET()).to.equal(givenAppSecret);
-        });
+        const returnedValue = getValueFromEnvironmentOrConfig(givenEnvironmentVariableKey, defaultConfigKey);
 
-        it('should retrieve expected value from config if MESSENGER_APP_SECRET environment variable is not set', () => {
-            const givenAppSecret = 'givenAppSecret';
-
-            stubConfigGet.withArgs('appSecret').returns(givenAppSecret);
-
-            expect(configValues.APP_SECRET()).to.equal(givenAppSecret);
-        });
+        expect(returnedValue).to.equal(givenEnvironmentVariableValue);
     });
 
-    describe('PAGE_ACCESS_TOKEN', () => {
-        it('should retrieve expected value from MESSENGER_PAGE_ACCESS_TOKEN environment variable', () => {
-            const givenPageAccessToken = 'givenPageAccessToken';
-            process.env['MESSENGER_PAGE_ACCESS_TOKEN'] = givenPageAccessToken;
+    it('should retrieve value from config variable if environment variable is not set', () => {
+        const givenConfigValue = 'givenConfigValue';
+        const givenConfigKey = 'givenConfigKey';
 
-            expect(configValues.PAGE_ACCESS_TOKEN()).to.equal(givenPageAccessToken);
-        });
+        stubConfigGet.withArgs('givenConfigKey').returns(givenConfigValue);
 
-        it('should retrieve expected value from config if MESSENGER_PAGE_ACCESS_TOKEN environment variable is not set', () => {
-            const givenPageAccessToken = 'givenPageAccessToken';
+        const returnedValue = getValueFromEnvironmentOrConfig(defaultEnvironmentVariableKey, givenConfigKey);
 
-            stubConfigGet.withArgs('pageAccessToken').returns(givenPageAccessToken);
-
-            expect(configValues.PAGE_ACCESS_TOKEN()).to.equal(givenPageAccessToken);
-        });
-    });
-
-    describe('SERVER_URL', () => {
-        it('should retrieve expected value from SERVER_URL environment variable', () => {
-            const givenServerUrl = 'givenServerUrl';
-            process.env['SERVER_URL'] = givenServerUrl;
-
-            expect(configValues.SERVER_URL()).to.equal(givenServerUrl);
-        });
-
-        it('should retrieve expected value from config if SERVER_URL environment variable is not set', () => {
-            const givenServerUrl = 'givenServerUrl';
-
-            stubConfigGet.withArgs('serverURL').returns(givenServerUrl);
-
-            expect(configValues.SERVER_URL()).to.equal(givenServerUrl);
-        });
-    });
-
-    describe('VALIDATION_TOKEN', () => {
-        it('should retrieve expected value from MESSENGER_VALIDATION_TOKEN environment variable', () => {
-            const givenValidationToken = 'givenValidationToken';
-            process.env['MESSENGER_VALIDATION_TOKEN'] = givenValidationToken;
-
-            expect(configValues.VALIDATION_TOKEN()).to.equal(givenValidationToken);
-        });
-
-        it('should retrieve expected value from config if MESSENGER_VALIDATION_TOKEN environment variable is not set', () => {
-            const givenValidationToken = 'givenValidationToken';
-
-            stubConfigGet.withArgs('validationToken').returns(givenValidationToken);
-
-            expect(configValues.VALIDATION_TOKEN()).to.equal(givenValidationToken);
-        });
+        expect(returnedValue).to.equal(givenConfigValue);
     });
 });

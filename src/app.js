@@ -10,7 +10,7 @@
 /* jshint node: true, devel: true */
 'use strict';
 
-import webhook from './middleware/webhook';
+import webhookGet from './middleware/webhookGet';
 
 const
   bodyParser = require('body-parser'),
@@ -63,7 +63,7 @@ if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
  * setup is the same token used here.
  *
  */
-app.get('/webhook', webhook);
+app.get('/webhook', webhookGet(VALIDATION_TOKEN));
 
 
 /*
