@@ -1,7 +1,7 @@
-import receivedAuthentication from '../../../src/events/receivedAuthentication';
+import receivedPostback from '../../../src/events/receivedPostback';
 import * as sendTextMessage from '../../../src/messages/textMessage';
 
-describe('receivedAuthentication', () => {
+describe('receivedPostback', () => {
     let spySendTextMessage;
 
     beforeEach(() => {
@@ -22,18 +22,18 @@ describe('receivedAuthentication', () => {
             recipient: {
                 id: 9876543210
             },
-            optin: {
-                ref: 'givenRef'
+            postback: {
+                payload: 'developer payload'
             },
             timestamp: 1010101010
         };
 
-        receivedAuthentication(givenEvent, givenPageAccessToken);
+        receivedPostback(givenEvent, givenPageAccessToken);
 
         expect(spySendTextMessage)
             .to.have.been.calledWithExactly(
                 givenSenderId,
-                'Authentication successful',
+                'Postback called',
                 givenPageAccessToken
             );
     });

@@ -1,5 +1,6 @@
 import receivedAuthentication from '../events/receivedAuthentication';
 import receivedDeliveryConfirmation from '../events/receivedDeliveryConfirmation';
+import receivedPostback from '../events/receivedPostback';
 
 function webhookPost(pageAccessToken) {
     return (request, response) => {
@@ -22,7 +23,7 @@ function webhookPost(pageAccessToken) {
                     } else if (messagingEvent.delivery) {
                         receivedDeliveryConfirmation(messagingEvent);
                     } else if (messagingEvent.postback) {
-                        receivedPostback(messagingEvent);
+                        receivedPostback(messagingEvent, pageAccessToken);
                     } else if (messagingEvent.read) {
                         receivedMessageRead(messagingEvent);
                     } else if (messagingEvent.account_linking) {
