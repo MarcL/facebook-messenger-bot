@@ -1,6 +1,7 @@
 import receivedAuthentication from '../events/receivedAuthentication';
 import receivedDeliveryConfirmation from '../events/receivedDeliveryConfirmation';
 import receivedPostback from '../events/receivedPostback';
+import receivedMessageRead from '../events/receivedMessageRead';
 
 function webhookPost(pageAccessToken) {
     return (request, response) => {
