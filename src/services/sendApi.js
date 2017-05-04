@@ -1,5 +1,7 @@
 // import request from 'request';
 
+// TODO : Using proxyquire to stub the request correctly
+
 function callSendAPI(messageData, accessToken, request) {
     const requestOptions = {
         uri: 'https://graph.facebook.com/v2.6/me/messages',
