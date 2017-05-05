@@ -4,7 +4,8 @@
   "description": "Get started example for Messenger Platform",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node dist/app.js",
+    "build": "babel src/ -d dist/",
     "lint": "jshint --exclude node_modules .",
     "test": "mocha"
   },
@@ -25,6 +26,7 @@
     "node": "~4.1.2"
   },
   "devDependencies": {
+    "babel-cli": "~6.24.1",
     "babel-preset-env": "~1.4.0",
     "babel-register": "~6.24.1",
     "chai": "~3.5.0",
