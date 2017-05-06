@@ -10,11 +10,14 @@
 /* jshint node: true, devel: true */
 'use strict';
 
+require('dotenv').config();
+
 import webhookGet from './middleware/webhookGet';
 import webhookPost from './middleware/webhookPost';
 import authorize from './middleware/authorize';
 import sendTextMessage from './messages/textMessage';
 import getValueFromEnvironmentOrConfig from './configValues';
+import verifyRequestSignature from './verifyRequestSignature';
 
 const
   bodyParser = require('body-parser'),
