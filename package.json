@@ -4,9 +4,8 @@
   "description": "Get started example for Messenger Platform",
   "main": "src/app.js",
   "scripts": {
-    "clean": "rm -rf dist/",
-    "start": "npm run build && node dist/app.js",
-    "build": "npm run clean && babel src/ -d dist/",
+    "build": "babel src/ -d dist/",
+    "start": "node dist/app.js",
     "lint": "jshint --exclude node_modules .",
     "test": "mocha"
   },
