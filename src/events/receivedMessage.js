@@ -489,3 +489,5 @@ function receivedMessage(event, pageAccessToken) {
     sendTextMessage(senderID, "Message with attachment received", pageAccessToken);
   }
 }
+
+export default receivedMessage;
