@@ -5,7 +5,7 @@ import receivedMessage from '../events/receivedMessage';
 import receivedMessageRead from '../events/receivedMessageRead';
 import receivedPostback from '../events/receivedPostback';
 
-function webhookPost(pageAccessToken) {
+function webhookPost(pageAccessToken, serverUrl) {
     return (request, response) => {
         var data = request.body;
 
@@ -22,7 +22,7 @@ function webhookPost(pageAccessToken) {
                     if (messagingEvent.optin) {
                         receivedAuthentication(messagingEvent, pageAccessToken);
                     } else if (messagingEvent.message) {
-                        receivedMessage(messagingEvent, pageAccessToken);
+                        receivedMessage(messagingEvent, pageAccessToken, serverUrl);
                     } else if (messagingEvent.delivery) {
                         receivedDeliveryConfirmation(messagingEvent);
                     } else if (messagingEvent.postback) {

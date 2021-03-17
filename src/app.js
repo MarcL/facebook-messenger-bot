@@ -10,7 +10,9 @@
 /* jshint node: true, devel: true */
 'use strict';
 
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 
 import webhookGet from './middleware/webhookGet';
 import webhookPost from './middleware/webhookPost';
@@ -71,7 +73,7 @@ app.get('/webhook', webhookGet(VALIDATION_TOKEN));
  * https://developers.facebook.com/docs/messenger-platform/product-overview/setup#subscribe_app
  *
  */
-app.post('/webhook', webhookPost(PAGE_ACCESS_TOKEN));
+app.post('/webhook', webhookPost(PAGE_ACCESS_TOKEN, SERVER_URL));
 /*
  * This path is used for account linking. The account linking call-to-action
  * (sendAccountLinking) is pointed to this URL.

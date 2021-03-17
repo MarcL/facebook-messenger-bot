@@ -5,7 +5,7 @@ import sendTextMessage from '../messages/textMessage';
  * Send an image using the Send API.
  *
  */
-function sendImageMessage(recipientId, pageAccessToken) {
+function sendImageMessage(recipientId, pageAccessToken, serverUrl) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -14,7 +14,7 @@ function sendImageMessage(recipientId, pageAccessToken) {
       attachment: {
         type: "image",
         payload: {
-          url: SERVER_URL + "/assets/rift.png"
+          url: serverUrl + "/assets/rift.png"
         }
       }
     }
@@ -27,7 +27,7 @@ function sendImageMessage(recipientId, pageAccessToken) {
  * Send a Gif using the Send API.
  *
  */
-function sendGifMessage(recipientId, pageAccessToken) {
+function sendGifMessage(recipientId, pageAccessToken, serverUrl) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -36,7 +36,7 @@ function sendGifMessage(recipientId, pageAccessToken) {
       attachment: {
         type: "image",
         payload: {
-          url: SERVER_URL + "/assets/instagram_logo.gif"
+          url: serverUrl + "/assets/instagram_logo.gif"
         }
       }
     }
@@ -49,7 +49,7 @@ function sendGifMessage(recipientId, pageAccessToken) {
  * Send audio using the Send API.
  *
  */
-function sendAudioMessage(recipientId, pageAccessToken) {
+function sendAudioMessage(recipientId, pageAccessToken, serverUrl) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -58,7 +58,7 @@ function sendAudioMessage(recipientId, pageAccessToken) {
       attachment: {
         type: "audio",
         payload: {
-          url: SERVER_URL + "/assets/sample.mp3"
+          url: serverUrl + "/assets/sample.mp3"
         }
       }
     }
@@ -71,7 +71,7 @@ function sendAudioMessage(recipientId, pageAccessToken) {
  * Send a video using the Send API.
  *
  */
-function sendVideoMessage(recipientId, pageAccessToken) {
+function sendVideoMessage(recipientId, pageAccessToken, serverUrl) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -80,7 +80,7 @@ function sendVideoMessage(recipientId, pageAccessToken) {
       attachment: {
         type: "video",
         payload: {
-          url: SERVER_URL + "/assets/allofus480.mov"
+          url: serverUrl + "/assets/allofus480.mov"
         }
       }
     }
@@ -93,7 +93,7 @@ function sendVideoMessage(recipientId, pageAccessToken) {
  * Send a file using the Send API.
  *
  */
-function sendFileMessage(recipientId, pageAccessToken) {
+function sendFileMessage(recipientId, pageAccessToken, serverUrl) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -102,7 +102,7 @@ function sendFileMessage(recipientId, pageAccessToken) {
       attachment: {
         type: "file",
         payload: {
-          url: SERVER_URL + "/assets/test.txt"
+          url: serverUrl + "/assets/test.txt"
         }
       }
     }
@@ -151,7 +151,7 @@ function sendButtonMessage(recipientId, pageAccessToken) {
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendGenericMessage(recipientId, pageAccessToken) {
+function sendGenericMessage(recipientId, pageAccessToken, serverUrl) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -165,7 +165,7 @@ function sendGenericMessage(recipientId, pageAccessToken) {
             title: "rift",
             subtitle: "Next-generation virtual reality",
             item_url: "https://www.oculus.com/en-us/rift/",
-            image_url: SERVER_URL + "/assets/rift.png",
+            image_url: serverUrl + "/assets/rift.png",
             buttons: [{
               type: "web_url",
               url: "https://www.oculus.com/en-us/rift/",
@@ -179,7 +179,7 @@ function sendGenericMessage(recipientId, pageAccessToken) {
             title: "touch",
             subtitle: "Your Hands, Now in VR",
             item_url: "https://www.oculus.com/en-us/touch/",
-            image_url: SERVER_URL + "/assets/touch.png",
+            image_url: serverUrl + "/assets/touch.png",
             buttons: [{
               type: "web_url",
               url: "https://www.oculus.com/en-us/touch/",
@@ -202,7 +202,7 @@ function sendGenericMessage(recipientId, pageAccessToken) {
  * Send a receipt message using the Send API.
  *
  */
-function sendReceiptMessage(recipientId, pageAccessToken) {
+function sendReceiptMessage(recipientId, pageAccessToken, serverUrl) {
   // Generate a random receipt ID as the API requires a unique ID
   var receiptId = "order" + Math.floor(Math.random()*1000);
 
@@ -226,14 +226,14 @@ function sendReceiptMessage(recipientId, pageAccessToken) {
             quantity: 1,
             price: 599.00,
             currency: "USD",
-            image_url: SERVER_URL + "/assets/riftsq.png"
+            image_url: serverUrl + "/assets/riftsq.png"
           }, {
             title: "Samsung Gear VR",
             subtitle: "Frost White",
             quantity: 1,
             price: 99.99,
             currency: "USD",
-            image_url: SERVER_URL + "/assets/gearvrsq.png"
+            image_url: serverUrl + "/assets/gearvrsq.png"
           }],
           address: {
             street_1: "1 Hacker Way",
@@ -353,7 +353,7 @@ function sendTypingOff(recipientId, pageAccessToken) {
  * Send a message with the account linking call-to-action
  *
  */
-function sendAccountLinking(recipientId, pageAccessToken) {
+function sendAccountLinking(recipientId, pageAccessToken, serverUrl) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -366,7 +366,7 @@ function sendAccountLinking(recipientId, pageAccessToken) {
           text: "Welcome. Link your account.",
           buttons:[{
             type: "account_link",
-            url: SERVER_URL + "/authorize"
+            url: serverUrl + "/authorize"
           }]
         }
       }
@@ -390,7 +390,7 @@ function sendAccountLinking(recipientId, pageAccessToken) {
  * then we'll simply confirm that we've received the attachment.
  *
  */
-function receivedMessage(event, pageAccessToken) {
+function receivedMessage(event, pageAccessToken, serverUrl) {
   var senderID = event.sender.id;
   var recipientID = event.recipient.id;
   var timeOfMessage = event.timestamp;
@@ -431,59 +431,60 @@ function receivedMessage(event, pageAccessToken) {
     // the text we received.
     switch (messageText) {
       case 'image':
-        sendImageMessage(senderID, pageAccessToken);
+        sendImageMessage(senderID, pageAccessToken, serverUrl);
         break;
 
       case 'gif':
-        sendGifMessage(senderID, pageAccessToken);
+        sendGifMessage(senderID, pageAccessToken, serverUrl);
         break;
 
       case 'audio':
-        sendAudioMessage(senderID, pageAccessToken);
+        sendAudioMessage(senderID, pageAccessToken, serverUrl);
         break;
 
       case 'video':
-        sendVideoMessage(senderID, pageAccessToken);
+        // sendVideoMessage(senderID, pageAccessToken);
+        sendTextMessage(senderID, 'Sorry, video was too big', pageAccessToken);
         break;
 
       case 'file':
-        sendFileMessage(senderID, pageAccessToken);
+        sendFileMessage(senderID, pageAccessToken, serverUrl);
         break;
 
       case 'button':
-        sendButtonMessage(senderID, pageAccessToken);
+        sendButtonMessage(senderID, serverUrl);
         break;
 
       case 'generic':
-        sendGenericMessage(senderID, pageAccessToken);
+        sendGenericMessage(senderID, serverUrl);
         break;
 
       case 'receipt':
-        sendReceiptMessage(senderID, pageAccessToken);
+        sendReceiptMessage(senderID, serverUrl);
         break;
 
       case 'quick reply':
-        sendQuickReply(senderID, pageAccessToken);
+        sendQuickReply(senderID, serverUrl);
         break;
 
       case 'read receipt':
-        sendReadReceipt(senderID, pageAccessToken);
+        sendReadReceipt(senderID, serverUrl);
         break;
 
       case 'typing on':
-        sendTypingOn(senderID, pageAccessToken);
+        sendTypingOn(senderID, serverUrl);
         break;
 
       case 'typing off':
-        sendTypingOff(senderID, pageAccessToken);
+        sendTypingOff(senderID, serverUrl);
         break;
 
       case 'account linking':
-        sendAccountLinking(senderID, pageAccessToken);
+        sendAccountLinking(senderID, pageAccessToken, serverUrl);
         break;
 
       default:
-        sendTextMessage(senderID, messageText, pageAccessToken);
+        sendTextMessage(senderID, messageText, serverUrl);
     }
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received", pageAccessToken);
